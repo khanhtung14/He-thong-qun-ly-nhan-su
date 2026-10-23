@@ -1,42 +1,41 @@
 import os
 import psycopg2
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 
 app = Flask(__name__)
 
+DB_HOST = os.environ.get('DB_HOST', 'postgres')
+DB_NAME = os.environ.get('DB_NAME', 'hrm_db')
+DB_USER = os.environ.get('DB_USER', 'hrm_user')
+DB_PASSWORD = os.environ.get('DB_PASSWORD', 'StrongPasswordForHRM2026!')
+
 def get_db_connection():
     return psycopg2.connect(
-        host=os.getenv("DB_HOST", "postgres"),
-        database=os.getenv("DB_NAME", "hrm_db"),
-        user=os.getenv("DB_USER", "hrm_user"),
-        password=os.getenv("DB_PASSWORD", "SuperSecurePassword123!")
+        host=DB_HOST,
+        database=DB_NAME,
+        user=DB_USER,
+        password=DB_PASSWORD
     )
 
 @app.route('/')
 def home():
-    return jsonify({
-        "status": "success",
-        "service": "Human Resource Management System (HRM)",
-        "modules": ["Quan ly Nhan vien", "Quan ly Phong ban", "Cham cong"]
-    })
+    # Render giao diện HTML Bootstrap
+    return render_template('index.html')
 
 @app.route('/health')
 def health():
     try:
         conn = get_db_connection()
-        cur = conn.cursor()
-        cur.execute("SELECT version();")
-        db_version = cur.fetchone()[0]
-        cur.close()
         conn.close()
         return jsonify({
-            "status": "UP",
+            "status": "healthy",
             "database_connection": "Successful",
-            "postgres_version": db_version
+            "application": "HRM System (De 10)",
+            "proxy_protocol": "HTTPS"
         }), 200
     except Exception as e:
         return jsonify({
-            "status": "DOWN",
+            "status": "unhealthy",
             "database_connection": "Failed",
             "error": str(e)
         }), 500

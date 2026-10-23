@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Quản Trị Nhân Sự (HRM-10)</title>
+    <!-- Bootstrap 5 CSS & Bootstrap Icons CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .sidebar { min-height: 100vh; background: #1e293b; color: white; }
+        .sidebar .nav-link { color: #94a3b8; font-weight: 500; border-radius: 8px; margin: 4px 0; }
+        .sidebar .nav-link.active, .sidebar .nav-link:hover { color: #fff; background-color: #334155; }
+        .card-stat { border: none; border-radius: 12px; transition: transform 0.2s; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .card-stat:hover { transform: translateY(-3px); }
+        .table-responsive { border-radius: 10px; overflow: hidden; background: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-3">
+            <div class="d-flex align-items-center mb-4 text-white text-decoration-none">
+                <i class="bi bi-people-fill fs-3 text-primary me-2"></i>
+                <span class="fs-4 fw-bold">HRM Portal</span>
+            </div>
+            <ul class="nav flex-column mb-auto">
+                <li class="nav-item">
+                    <a href="/" class="nav-link active"><i class="bi bi-speedometer2 me-2"></i>Tổng quan</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#employees-section" class="nav-link"><i class="bi bi-person-lines-fill me-2"></i>Nhân sự</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/pgadmin/" target="_blank" class="nav-link"><i class="bi bi-database me-2"></i>Quản trị Database</a>
+                </li>
+                <li class="nav-item">
+                    <a href="http://192.168.1.17:3000" target="_blank" class="nav-link"><i class="bi bi-graph-up me-2"></i>Grafana Monitoring</a>
+                </li>
+            </ul>
+            <hr class="text-secondary">
+            <div class="small text-muted">
+                Phiên bản: <strong>HRM-v1.0</strong><br>
+                Host: <code>Ubuntu 18.04 LTS</code>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+            <!-- Header -->
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                <div>
+                    <h2 class="h3 fw-bold text-dark">Bảng Điều Khiển Quản Lý Nhân Sự</h2>
+                    <p class="text-muted mb-0">Hệ thống phân phối vi dịch vụ chạy trên nền tảng Docker Compose & Nginx HTTPS</p>
+                </div>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <a href="/health" class="btn btn-outline-success btn-sm me-2" target="_blank">
+                        <i class="bi bi-shield-check me-1"></i>Kiểm tra API Health
+                    </a>
+                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
+                        <i class="bi bi-plus-circle me-1"></i>Thêm nhân viên
+                    </button>
+                </div>
+            </div>
+
+            <!-- Metric Cards (Overview) -->
+            <div class="row g-3 mb-4">
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card card-stat p-3 bg-white">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle me-3">
+                                <i class="bi bi-people fs-4"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted mb-1 small text-uppercase fw-semibold">Tổng nhân sự</h6>
+                                <h4 class="fw-bold mb-0 text-dark">48</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card card-stat p-3 bg-white">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-success bg-opacity-10 text-success p-3 rounded-circle me-3">
+                                <i class="bi bi-building-check fs-4"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted mb-1 small text-uppercase fw-semibold">Phòng ban</h6>
+                                <h4 class="fw-bold mb-0 text-dark">6</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card card-stat p-3 bg-white">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-info bg-opacity-10 text-info p-3 rounded-circle me-3">
+                                <i class="bi bi-database-check fs-4"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted mb-1 small text-uppercase fw-semibold">Cơ sở dữ liệu</h6>
+                                <h4 class="fw-bold mb-0 text-success fs-6"><i class="bi bi-check-circle-fill me-1"></i>PostgreSQL 15</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card card-stat p-3 bg-white">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-circle me-3">
+                                <i class="bi bi-shield-lock fs-4"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted mb-1 small text-uppercase fw-semibold">Bảo mật Reverse Proxy</h6>
+                                <h4 class="fw-bold mb-0 text-dark fs-6">SSL / TLS (Port 443)</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employee List Table -->
+            <div id="employees-section" class="card border-0 shadow-sm rounded-3 mb-4">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-list-task me-2 text-primary"></i>Danh Sách Nhân Sự Gần Đây</h5>
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle">Dữ liệu kết nối Live từ Database</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-3">Mã NV</th>
+                                    <th>Họ và Tên</th>
+                                    <th>Chức vụ</th>
+                                    <th>Phòng ban</th>
+                                    <th>Email</th>
+                                    <th>Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="ps-3 fw-semibold text-secondary">#NV-1001</td>
+                                    <td><strong>Nguyễn Văn An</strong></td>
+                                    <td>DevOps Engineer</td>
+                                    <td>Khối Công Nghệ</td>
+                                    <td>an.nguyen@hrm.com</td>
+                                    <td><span class="badge bg-success">Đang công tác</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-3 fw-semibold text-secondary">#NV-1002</td>
+                                    <td><strong>Trần Thị Mai</strong></td>
+                                    <td>Chuyên viên Tuyển dụng</td>
+                                    <td>Nhân sự (HR)</td>
+                                    <td>mai.tran@hrm.com</td>
+                                    <td><span class="badge bg-success">Đang công tác</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-3 fw-semibold text-secondary">#NV-1003</td>
+                                    <td><strong>Lê Hoàng Long</strong></td>
+                                    <td>Backend Developer</td>
+                                    <td>Khối Công Nghệ</td>
+                                    <td>long.le@hrm.com</td>
+                                    <td><span class="badge bg-info text-dark">Thử việc</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-3 fw-semibold text-secondary">#NV-1004</td>
+                                    <td><strong>Phạm Quỳnh Anh</strong></td>
+                                    <td>Kế toán Trưởng</td>
+                                    <td>Tài chính - Kế toán</td>
+                                    <td>anh.pham@hrm.com</td>
+                                    <td><span class="badge bg-success">Đang công tác</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Architecture Box -->
+            <div class="alert alert-primary d-flex align-items-center rounded-3 p-3" role="alert">
+                <i class="bi bi-info-circle-fill fs-3 me-3 flex-shrink-0"></i>
+                <div>
+                    <h6 class="alert-heading fw-bold mb-1">Kiến trúc Vận hành Container Hóa:</h6>
+                    <span class="small">
+                        Ứng dụng đang thực thi trong non-root container (<code>UID 1001</code>). Cơ sở dữ liệu PostgreSQL được cô lập trong <code>backend_net</code> và kết nối proxy an toàn qua Nginx với các tiêu chuẩn bảo mật <code>X-Frame-Options: DENY</code>, <code>X-Content-Type-Options: nosniff</code>.
+                    </span>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Modal Thêm Nhân Viên Mẫu -->
+<div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Thêm Nhân Viên Mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label">Họ và Tên</label>
+                        <input type="text" class="form-control" placeholder="Nhập tên nhân viên...">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email làm việc</label>
+                        <input type="email" class="form-control" placeholder="example@hrm.com">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Phòng ban</label>
+                        <select class="form-select">
+                            <option>Khối Công Nghệ</option>
+                            <option>Nhân sự (HR)</option>
+                            <option>Tài chính - Kế toán</option>
+                            <option>Kinh doanh & Marketing</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Lưu hồ sơ</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap 5 Bundle JS CDN -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
